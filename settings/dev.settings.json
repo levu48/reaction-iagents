@@ -1,0 +1,17 @@
+{
+  "ROOT_URL": "",
+  "MONGO_URL": "",
+  "MAIL_URL": "",
+  "reaction": {
+    "REACTION_USER": "",
+    "REACTION_AUTH": "",
+    "REACTION_EMAIL": ""
+  },
+  "isDebug": "info",
+  "public": {
+    "velocity:html-reporter": {
+      "position": "top right",
+      "tab-index" : 1
+    }
+  }
+}
