@@ -1,0 +1,17 @@
+define Info {
+	username: '',
+	text: '',
+	constructor: function(username, text) {
+		this.username = username;
+		this.text = text;
+	}
+}
+
+define History {
+	username: null,
+	history: {},
+	constructor: function(username) {
+		this.username = username;
+		this.history = {}
+	}
+}

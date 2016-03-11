@@ -1,0 +1,71 @@
+global SERVER = "server";
+global ARTS = "arts";
+global DENTIST = "dentist";
+
+global categories =  [
+		{ key: 'watercolor', value: 'watercolor'},
+		{ key: 'acrylic', value: 'acrylic'},
+		{ key: 'oil', value: 'oil'},
+		{ key: 'sculpture', value: 'sculpture'},
+		{ key: 'all', value: 'all'}
+	];
+
+global watercolorMain =  [
+		{ key: 'Charles Reid', value: 'Charles Reid, popular modern watercolorist'},
+		{ key: 'John Singer Sargent', value: 'John Singer Sargent, 19th American master'},
+		{ key: 'Winslow Homer', value: 'Winslow Homer, 19th century American master'},
+		{ key: 'Frank Webb', value: 'Frank Webb, a noted young artist'}
+	];
+
+global oilMain =  [
+		{ key: 'John Singer Sargent', value: 'John Singer Sargent, 19th American master'},
+		{ key: 'Pablo Picasso', value: 'Pablo Picasso, the most famous artist of 20th century'},
+		{ key: 'Paul Gauguin', value: 'Paul Gauguin, French Post-impressionist'},
+		{ key: 'Vincent van Gogh', value: 'Vincent van Gogh, French Post-impressionist'},
+		{ key: 'Charmaine Olivia', value: 'Charmaine Olivia, modern figurative painter'}
+	];
+
+
+/// ===== DENTISTRY SERVICES =========
+
+global categories_dentist =  [
+		{ key: 'dentist.diagnosis', value: 'Do you have problems with your teeth?'},
+		{ key: 'dentist.insurance', value: 'Do you have questions about insurance policies?'},
+		{ key: 'dentist.directory', value: 'Do you want to look up local dentist offices?'}
+	];
+
+global dentist_diagnosis =  [
+		{ key: 'dentist.diagnosis.pain', value: 'Feel pain in your tooth'},
+		{ key: 'dentist.diagnosis.noPain', value: 'There is no pain'},
+		{ key: 'dentist.diagnosis.inflamation', value: 'There is inflamation'},
+		{ key: 'dentist.diagnosis.noInflamation', value: 'There is no inflamation'}
+	];
+
+//global dentist_group1 = [];
+
+
+global dentist_group1 =  [
+		{ 	key: 'dentist.directory.sadowskiTodd', 
+			value: 'Dr. Todd Sadowski', 
+			link: 'http:\/\/www.mapdentist.com\/listing\/todd-sadowski-dds',
+			image: '\/images\/sadowski.jpg',
+			race: 'american',
+			language: ['english']
+		},
+		{ 	key: 'dentist.directory.BarzegarHTimothy', 
+			value: 'Dr. Timothy H. Barzegar',
+			link: 'http:\/\/www.mapdentist.com\/listing\/dr-timothy-h-barzegar',
+			image: 'http:\/images\/barzegar.jpg',
+			race: 'iran',
+			language: ['english', 'farsi']
+		},
+		{ 	key: 'dentist.directory.crossroadsDental', 
+			value: 'Crossroads Dental',
+			link: 'http:\/\/www.mapdentist.com\/listing\/crossroads-dental',
+			image: '\/images\/crossroads.png',
+			race: 'american',
+			language: ['english', 'french']
+		}
+		
+	];
+

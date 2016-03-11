@@ -1,0 +1,10 @@
+<template name="agentsCoreHead">
+  <head>
+    <title>{{metaData.name}} | {{metaData.title}}</title>
+    {{#each metaData.meta}}
+      <meta name="{{name}}" content="{{content}}">
+    {{/each}}
+	<script type="text/javascript" src="/resources/nools-master/nools.js"></script>
+	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  </head>
+</template>

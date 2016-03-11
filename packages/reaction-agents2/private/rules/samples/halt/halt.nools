@@ -1,0 +1,46 @@
+define Counter {
+	count: 0,
+	constructor: function(count) {
+		this.count = count;
+	}
+}
+
+rule ICanCount {
+	salience: 10;
+	when {
+		$cnt: Counter $cnt.count >= 10000;
+
+	} then {
+		console.log('Look ma! I counted to ' + $cnt.count);
+		halt();
+	}
+}
+
+rule notCount {
+	when {
+		not($ctr: Counter);
+
+	} then {
+		console.log('I am gonna count!');
+		assert(new Counter(1));
+	}
+}
+
+rule giveAnUpdate {
+	when {
+		$ctr: Counter $ctr.count % 1000 == 0 {count: $count};
+
+	} then {
+		console.log ('Imma countin ... ' + $count);
+		modify($ctr, function() { this.count = $count + 1; });
+	}
+}
+
+rule count {
+	when {
+		$ctr: Counter {count: $count};
+
+	} then {
+		modify($ctr, function() { this.count = $count + 1; });
+	}
+}

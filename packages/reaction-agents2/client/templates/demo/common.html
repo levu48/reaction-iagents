@@ -1,0 +1,158 @@
+<head>
+  <script type="text/javascript">
+
+   function selectOption(but, ctx) {
+      var str = $(but).siblings("select").val();
+      Meteor.call("dbInsert", {
+        group: GROUP,
+        sender: Meteor.user().username,
+        receiver: "server",
+        info: {
+          ctx: ctx,
+          value: str,
+          mesg: str
+        },
+        ts: new Date()
+      });
+      console.log("selectOption: ctx = " + ctx + ", value = " + str);
+    }
+
+
+    function selectOption2(elm) {
+      var str = $(elm).val();
+      if (str === 'unknown')
+        return;
+
+      if (str.startsWith("client price ")) {
+        var arr = str.split(" ");
+        var ctx = arr.length > 1 ? arr[0].trim() + "." + arr[1].trim() : '';
+        var val = arr.length > 2 ? arr[2].trim() : ctx;
+        var msg = arr.length > 3 ? str.substring(14 + val.length).trimLeft() : 0;
+
+        var obj = {
+          sender: Meteor.user().username, 
+          receiver: Meteor.user().username, 
+          info: {
+            ctx: ctx + "." + val,
+            value: msg,
+            mesg: "Find products of minimum prices, limit " + msg
+          },
+          ts: new Date()
+        };
+        Meteor.call("dbInsert", obj);
+        return;
+      }
+
+      arr = str.split(" ");
+      ctx = arr.length > 0 ? arr[0].trim() : '';
+      val = arr.length > 1 ? arr[1].trim() : ctx;
+      msg = arr.length > 2 ? str.substring(ctx.length + 1 + val.length + 1).trimLeft() : val;
+
+      var sender = Meteor.user().username;
+      var receiver = "server";
+      if (ctx === 'personal') {
+        receiver = sender;
+        ctx = ctx + "." + val
+        val = msg;
+      }
+
+      Meteor.call("dbInsert", {
+        group: GROUP,
+        sender: sender,
+        receiver: receiver,
+        info: {
+          ctx: ctx,
+          value: val,
+          mesg: msg
+        }
+      });
+      console.log("selectOption2: ctx = " + ctx + ", value = " + val);
+    }
+
+
+    Message = Agents.IaMessage;
+
+    Personal = function(obj) {
+      this.username = obj.username,
+      this.location = obj.location,
+      this.city = obj.city,
+      this.state = obj.state,
+      this.style = obj.style,
+      this.art = obj.art,
+      this.minPrice = obj.minPrice
+    }
+
+    Personal.prototype = {
+      constructor: Personal,
+
+      get: function(key) {
+        return this[key];
+      },
+
+      isKey: function(key) {
+        return this.hasOwnProperty(key);
+      }
+    }
+
+
+    function noolsCB(err, res) {
+      if (err) { 
+        console.log(err); 
+        return;
+      }
+
+      var flow = nools.compile(res.content, {
+        name: "rules",
+        define: { 
+          Message: Message,
+          Personal: Personal
+        },
+        scope: {
+          Agents: Agents
+        }
+      });
+
+      var session = flow.getSession();
+
+
+      console.log("DONE READING RULES AND SESSION IS: " + session);
+
+      personal = new Personal({
+        username: ['Owner'],
+        location: ['Garden Grove, CA'],
+        city: ['Garden Grove'],
+        state: ['CA'],
+        style: ['figurative'],
+        art: ['oil', 'watercolor'],
+        minPrice: 10
+      });
+
+      session.assert(personal);
+
+      session.on("assert", function(fact) {
+        console.log("ON ASSERT, fact = ", fact);
+      });
+
+      if (typeof groups === 'undefined') groups = {};
+      groups[GROUP] = { flow: flow, session: session };
+
+      Agents.IaMessages.find({group: GROUP}).observe({
+        added: function(message) {
+          if (message.group ===  GROUP && message.receiver === Meteor.user().username) {
+            console.log("Db INSERT (common.html) : ", message, "ctx = " + message.info.ctx);
+            groups[GROUP].session.assert(new Message(message));
+            groups[GROUP].session.match();
+          }
+        }
+      });
+    
+    }
+
+    function initExpertSystem(group, file) {
+      Meteor.call("dbReset", group, function() {
+        HTTP.get(Meteor.absoluteUrl(file + "?ts=" + Date()), noolsCB);
+      });
+    }
+    
+  </script>
+</head>

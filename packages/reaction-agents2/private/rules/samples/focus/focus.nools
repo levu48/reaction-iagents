@@ -1,0 +1,33 @@
+define Message {
+	name: '',
+	constructor: function(message) {
+		this.name = message;
+	}
+}
+
+rule Hello {
+	agenda-group: "ag1";
+	//auto-focus: true;
+	when {
+		m: Message m.name === 'hello';
+
+	} then {
+		modify(m, function() {
+			this.name = "goodbye";
+		});
+		console.log("RULE Hello");
+	}
+}
+
+rule Hello2 {
+	agenda-group: "ag2";
+	auto-focus: true;
+	when {
+		m: Message m.name === 'goodbye';
+
+	} then {
+		modify(m, function() {
+			this.name = "hello2";
+		});
+	}
+}

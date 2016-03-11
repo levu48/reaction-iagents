@@ -1,0 +1,73 @@
+<head>
+  <script language="Javascript" type="text/javascript">
+  //<!
+  google.load('search', '1');
+  var searchControl = null;
+
+  function doSearch() {
+    // Create a search control
+    ///var searchControl = new google.search.SearchControl();
+    searchControl = new google.search.SearchControl(); /// to DEBUG on console
+
+    // Add in a full set of searchers
+    ///var localSearch = new google.search.LocalSearch();
+    ///searchControl.addSearcher(localSearch);
+    searchControl.addSearcher(new google.search.WebSearch());
+    ///searchControl.addSearcher(new google.search.VideoSearch());
+    ///searchControl.addSearcher(new google.search.BlogSearch());
+    ////searchControl.addSearcher(new google.search.NewsSearch());
+    ///searchControl.addSearcher(new google.search.ImageSearch());
+    ///searchControl.addSearcher(new google.search.BookSearch());
+    ///searchControl.addSearcher(new google.search.PatentSearch());
+
+    // Set the Local Search center point
+    ///localSearch.setCenterPoint("Garden Grove, CA");
+
+    // tell the searcher to draw itself and tell it where to attach
+    searchControl.draw(document.getElementById("searchcontrol"));
+
+    // execute an inital search
+    searchControl.execute("VW GTI");
+  }
+
+  google.setOnLoadCallback(doSearch);
+
+  //]]>
+  </script>
+</head>
+<template name="demoSearch">
+
+
+    <script type="text/javascript">
+      GROUP = Router.routes["agents/demo/search"].options.data.group;
+      initExpertSystem(GROUP, "/rules/search.js");
+    </script>
+
+  <div class="panel panel-default">
+
+    <div class="panel-body">
+      <div>
+        <select name="command" onChange="if (this.selectedIndex) selectOption2(this);">
+          <option value="unknown">--</option>
+          <option value="start.search">Start</option>
+
+        </select>
+      </div>
+
+      <input type="text" id="commandText" placeholder="Your command string goes here ..." style="width: 50%; margin-bottom: 0px">
+      <input type="button" value="Go" class="btn btn-primary command">
+      <input type="button" value="Search" onClick="doSearch()" class="btn btn-primary search">
+
+      <!--div id="messages" style="background-color: #ffffff; border: 1px solid darkgray; max-height: 300px; height:300px; overflow: auto; padding: 5px"-->
+      <div>
+        {{#each messages}}
+          {{> clientMessage}}
+        {{/each}}
+      </div>
+
+    </div>
+
+    <div id="searchcontrol">Loading</div>
+
+  </div>
+</template>

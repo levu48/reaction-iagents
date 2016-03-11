@@ -1,0 +1,35 @@
+<template name="demoDentist">
+  <script type="text/javascript">
+      GROUP = Router.routes["agents/demo/dentist"].options.data.group;
+      initExpertSystem(GROUP, "/rules/dentist.js");
+    </script>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h2 class="panel-title">DENTISTRY SERVICES<br>An iAgent will guide you!</h2>
+    </div>
+
+    <div class="panel-body">
+      <div>
+        <select name="command" onChange="if (this.selectedIndex) selectOption2(this);">
+          <option value="unknown">--</option>
+          <option value="start.dentist">Start</option>
+        </select>
+      </div>
+
+      <input type="text" id="commandText" placeholder="Your command string goes here ..." style="width: 50%; margin-bottom: 0px">
+      <input type="button" value="Go" class="btn btn-primary command">
+
+      <!--div id="messages" style="background-color: #ffffff; border: 1px solid darkgray; max-height: 300px; height:300px; overflow: auto; padding: 5px"-->
+      <div>
+        {{#each messages}}
+          {{> clientMessage}}
+        {{/each}}
+      </div>
+
+    </div>
+
+  </div>
+</template>
+
+

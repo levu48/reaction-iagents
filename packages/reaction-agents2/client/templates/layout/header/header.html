@@ -1,0 +1,39 @@
+<template name="agentsLayoutHeader">
+<div class="container-fluid">
+  <div class="nav" role="navigation">
+    <div class="row navbar-shop">
+      <div class="navbar-brand">{{> headerBrand}}</div>
+      <div class="navbar-cart">{{> cartIcon}}</div>
+      <div class="cart-alert">{{> cartPanel}}</div>
+      <div class="navbar-accounts">{{> accounts tpl="loginDropdown"}}</div>
+      <div class="navbar-languages hidden-xs">{{> i18nChooser}}</div>
+      <div class="navbar-accounts"><a href="/dashboard/agents">iAgents</a></div>
+      <div class="navbar-languages hidden-xs">{{> DemoMenu }}</div>
+    </div>
+    <div class="row navbar-primary-tags">
+       <div class="navbar-tags">{{> headerTags}}</div>
+     </div>
+  </div>
+</div>
+</template>
+
+
+<template name='DemoMenu'>
+<div class="dropdown" role="language">
+  <div class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="1000">
+    Applications<span class="caret"></span>
+  </div>
+  <ul class="dropdown-menu text-center" role="menu">
+    <li role="presentation" class="dropdown-header">Select an applicaton</li>
+    <li class="divider"></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/arts">Art Stores</a></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/dentist">Dentistry Services</a></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/search">Search Engine</a></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/loan">Loan Processing</a></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/search">Search Engine</a></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/search">AI Game</a></li>
+    <li class="{{active}}"><a role="menuitem" href="/agents/demo/iot">The Internet of Things</a></li>
+
+  </ul>
+</div>
+</template>

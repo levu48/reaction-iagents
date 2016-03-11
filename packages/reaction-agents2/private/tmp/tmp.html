@@ -1,0 +1,221 @@
+<html>
+<head></head>
+<body>
+<div>
+          
+            <a href="http://www.mapdentist.com/listing/todd-sadowski-dds" target="_blank">Dr. Todd Sadowski</a><br>
+            <img src="http://www.mapdentist.com/wp-content/uploads/2015/07/3.jpg" width="50px"><a href="http://www.mapdentist.com/wp-content/uploads/2015/07/3.jpg" target="_blank">http://www.mapdentist.com/wp-content/uploads/2015/07/3.jpg</a>
+          
+            <a href="http://www.mapdentist.com/listing/dr-timothy-h-barzegar" target="_blank">Dr. Timothy H. Barzegar</a><br>
+            <img src="http://www.mapdentist.com/wp-content/uploads/2015/07/1-245x3501.jpg" width="50px"><a href="http://www.mapdentist.com/wp-content/uploads/2015/07/1-245x3501.jpg" target="_blank">http://www.mapdentist.com/wp-content/uploads/2015/07/1-245x3501.jpg</a>
+          
+            <a href="http://www.mapdentist.com/listing/crossroads-dental" target="_blank">Crossroads Dental</a><br>
+            <img src="http://www.mapdentist.com/wp-content/uploads/2015/03/img6.png" width="50px"><a href="http://www.mapdentist.com/wp-content/uploads/2015/03/img6.png" target="_blank">http://www.mapdentist.com/wp-content/uploads/2015/03/img6.png</a>
+          
+</div>
+</body>
+</html>
+
+
+
+
+/*
+rule hello {
+	agenda-group: ARTS;
+	auto-focus: true;
+	when {
+		m: Message m.receiver == SERVER && m.info.ctx == 'start.arts';
+		h: History h.username === m.sender;
+	
+	} then {
+		console.log("RULE hello");
+		Fibers(function() {
+			Meteor.call("dbInsert", {
+				group: ARTS,
+				sender: m.sender, 
+				receiver: m.receiver,  
+				info: {
+					ctx: "request.categories",
+					mesg: "Requesting categories",
+					value: "categories",
+				},
+				ts: new Date()
+			});			
+		}).run();
+		retract(m);
+	}
+}
+
+
+rule requestCategories {
+	agenda-group: ARTS;
+	auto-focus: true;
+	salience: 10;
+	when {
+		m: Message m.receiver == SERVER && m.info.ctx == 'request.categories';
+		h: History h.username == m.sender;
+
+	} then {
+		console.log("RULE requestCategories");
+		h.history[m.info.value] = true;
+		modify(h);
+		retract(m);
+		
+		Fibers(function() {
+			Meteor.call("dbInsert", {
+				group: ARTS,
+				sender: SERVER, 
+				receiver: m.sender,  
+				info: {
+					ctx: "request.products.category",
+					mesg: "Welcome to the Fine Arts Store",
+					value: categories,
+					form: {
+						label: "Our website contains these main categories:",
+						options: categories,
+						submit: "please choose one"
+					}
+				},
+				ts: new Date()
+			});
+		}).run();
+		
+	}
+}
+
+
+rule requestCategory {
+	agenda-group: ARTS;
+	auto-focus: true;
+	salience: 10;
+	when {
+		m: Message m.receiver == SERVER && m.info.ctx == 'request.products.category';
+		h: History h.username == m.sender;
+
+	} then {
+		console.log("RULE requestCategory");
+		h.history[m.info.value] = true;
+		modify(h);
+
+		Fibers(function() {
+			Agents.displayProducts(m.info.value);
+			Meteor.call("dbInsert", {
+				group: ARTS,
+				sender: SERVER, 
+				receiver: m.sender,  
+				info: {
+					ctx: m.info.ctx + ".response",
+					mesg: "Products from your requested category, " + m.info.value,
+					value: m.info.value,
+				},
+				ts: new Date()
+			});
+		}).run();
+		retract(m);
+	}
+}
+
+
+rule categoryWatercolor {
+	agenda-group: ARTS;
+	auto-focus: true;
+	salience: 15;
+	when {
+		//s: String s == 'INACTIVE';
+		m: Message m.receiver == SERVER && m.info.ctx == 'request.products.category' && m.info.value == 'watercolor';
+		h: History h.username == m.sender;
+
+	} then {
+		console.log("RULE categoryWatercolor");
+		Fibers(function() {
+			Meteor.call("dbInsert", {
+				group: ARTS,
+				sender: SERVER, 
+				receiver: m.sender,  
+				info: {
+					ctx: "products.by.artist",
+					mesg: "Our watercolor collections contain both classic masters and up and coming young artists.",
+					value: categories,
+					form: {
+						label: "You can take a look at these:",
+						options: watercolorMain,
+						submit: "please choose one"
+					}
+				},
+				ts: new Date()
+			});
+		}).run();
+	}
+}
+
+
+rule categoryOil {
+	agenda-group: ARTS;
+	auto-focus: true;
+	salience: 15;
+	when {
+		//s: String s == 'INACTIVE';
+		m: Message m.receiver == SERVER && m.info.ctx == 'request.products.category' && m.info.value == 'oil';
+		h: History h.username == m.sender;
+
+	} then {
+		console.log("RULE categoryOil");
+		Fibers(function() {
+			Meteor.call("dbInsert", {
+				group: ARTS,
+				sender: SERVER, 
+				receiver: m.sender,  
+				info: {
+					ctx: "products.by.artist",
+					mesg: "Our oil paintings collections contain both classic masters and up and coming young artists.",
+					value: categories,
+					form: {
+						label: "You can take a look at these:",
+						options: oilMain,
+						submit: "please choose one"
+					}
+				},
+				ts: new Date()
+			});
+		}).run();
+	}
+}
+
+
+rule productsByArtist {
+	agenda-group: ARTS;
+	auto-focus: true;
+	when {
+		m: Message m.receiver == SERVER && m.info.ctx == 'products.by.artist';
+		h: History h.username == m.sender;
+
+	} then {
+		console.log("RULE products.by.artist");
+		h.history[m.info.value] = true;
+		modify(h);
+
+		Fibers(function() {
+			Agents.getProducts({artist: m.info.value});
+		}).run();
+
+		retract(m);
+	}
+}
+
+rule onSales {
+	agenda-group: ARTS;
+	auto-focus: true;
+	when {
+		h: History h.history['Charles Reid'] === true && h.history['Pablo Picasso'] === true;
+
+	} then {
+		console.log("RULE onSales");
+		Fibers(function() {
+			Agents.IaOnSalesSet.remove({});
+			Agents.addToOnSalesSet("Standing Nude by Charles Reid");
+			Agents.addToOnSalesSet("The Old Guitarist by Picasso");
+		}).run();
+	}
+}
+
+*/

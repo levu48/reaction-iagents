@@ -1,0 +1,1 @@
+//ReactionCore.Subscriptions.Products = Meteor.subscribe("Products", Meteor.userId());

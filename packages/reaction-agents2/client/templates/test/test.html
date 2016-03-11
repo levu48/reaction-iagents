@@ -1,0 +1,14 @@
+<template name="test">
+	<h1>Hello world!</h1>
+	<h3>group = {{group}}</h3>
+	{{#with data}}
+		<h3>data.group = {{ group }}</h3>
+	{{/with }}
+
+	<script type="text/javascript">
+		var group = Router.routes["agents/test"].options.data.group;
+		console.log("group = ", group);
+		console.log("this ", this);
+		console.log("template is ", Template["test"].__helpers[' group']);
+	</script>
+</template>

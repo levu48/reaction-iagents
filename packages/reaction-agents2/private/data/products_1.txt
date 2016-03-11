@@ -1,0 +1,32 @@
+
+[{
+	"_id":"TBKg6DLjmi8tgomXp",
+	"variants":[
+		{"_id":"8tpd5MZaqqWS2Mnh8",
+		"price":10,
+		"type":"variant",
+		"inventoryManagement":true,
+		"inventoryPolicy":true,
+		"updatedAt":"2015-10-04T08:54:22.506Z",
+		"createdAt":"2015-10-04T08:54:22.506Z",
+		"title":"Venetian View by John Singer Sargent",
+		"weight":1,
+		"inventoryQuantity":1,
+		"taxable":true}
+	],
+	"shopId":"oXzbyAxuG5d7bDQKh",
+	"type":"simple",
+	"requiresShipping":true,
+	"createdAt":"2015-10-04T08:54:22.506Z",
+	"handle":"",
+	"isVisible":true,
+	"updatedAt":"2015-10-05T00:29:50.548Z",
+	"hashtags":["fyrvsEeCdwEaCvc6w","3CXCZS4Eor4odv4Hz"],
+	"metafields":[
+		{"key":"Title","value":"Venetian View"},
+		{"key":"Artist","value":"John Singer Sargent"},
+		{"key":"Medium","value":"Watercolor"},
+		{"key":"Type","value":"Landscape"}
+	],
+	"title":"Venetian View by John Singer Sargent"
+}]

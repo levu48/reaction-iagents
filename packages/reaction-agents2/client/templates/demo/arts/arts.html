@@ -1,0 +1,114 @@
+<template name="demoArts">
+  <script type="text/javascript">
+      //HTTP.get(Meteor.absoluteUrl("/rules/arts.js?ts=" + Date()), noolsCB(err, res));
+      //console.log(Template.instance());
+      //var GROUP = Template['demoArts'].__helpers[' group'];
+      //alert(GROUP);
+      //initExpertSystem(GROUP, "/rules/arts.js");
+      GROUP = Router.routes["agents/demo/arts"].options.data.group;
+      initExpertSystem(GROUP, "/rules/arts.js");
+    </script>
+
+  <div class="panel panel-default">
+    <!--
+    <div class="panel-heading">
+      <h2 class="panel-title">ART STORE<br>An iAgent will guide you!</h2>
+    </div>
+
+    <div class="products-listing">
+      <i>>>> Server returns these products, {{ categories }}</i><br>
+      {{> productsListing }}
+    </div>
+    -->
+    
+    <div class="panel-body">
+      <div>
+        <select name="command" onChange="if (this.selectedIndex) selectOption2(this);">
+          <option value="unknown">--</option>
+          <option value="start.arts">Start</option>
+          <option value="request.categories categories Please provide your categories">Request categories</option>
+          <option value="request.products.category oil Please provide oil painting products">Select oil paintings</option>
+          <option value="personal style portrait landscape figurative">Set personal preferences to portrait, landscape and figurative</option>
+          <option value="client price min 5">Show 5  lowest prices</option>
+        </select>
+      </div>
+
+      <input type="text" id="commandText" placeholder="Your command string goes here ..." style="width: 50%; margin-bottom: 0px">
+      <input type="button" value="Go" class="btn btn-primary command">
+
+      <!--div id="messages" style="background-color: #ffffff; border: 1px solid darkgray; max-height: 300px; height:300px; overflow: auto; padding: 5px"-->
+      <div>
+        {{#each messages}}
+          {{> clientMessage}}
+        {{/each}}
+      </div>
+
+    </div>
+
+  </div>
+</template>
+
+<template name="productsListing">
+  {{#each displaySet}}
+    {{> displayProduct }}
+  {{/each}}
+
+  <div style="clear:both">
+    {{#if onSalesSet.count }}<strong>On Sales (50% OFF)</strong><br>{{/if}}
+    {{#each onSalesSet }}
+      {{> displayOnSalesItem }}
+    {{/each}}
+  </div>
+
+  <div class="client">
+    <div style="clear:both">
+      <i>>>> Clients further refines the result set based on personal preferences:</i><br>
+    </div>
+
+    {{#each clientSet }}
+      {{> displayClientSet }}
+    {{/each}}
+
+    {{> displayMinPrices }}
+  </div>
+</template>
+
+<template name="displayProduct">
+  <div style="float:left">
+    <a href="/product/{{ _id }}"><img style="padding-top:4px; padding-right:6px" src='/assets/files/Media/{{ getImageId _id }}/{{ getImageName _id }}?store=thumbnail'></a><br>
+    ${{ getProductPriceRange _id }}
+  </div>
+</template>
+
+<template name="displayOnSalesItem">
+  <div style="float:left">
+    <a href="/product/{{ _id }}"><img style="padding-top:4px; padding-right:6px" src='/assets/files/Media/{{ getImageId _id }}/{{ getImageName _id }}?store=thumbnail'></a><br>
+    ${{ getOnSalesPrice _id }}
+  </div>
+</template>
+
+<template name="displayClientSet">
+  <div style="clear:both">
+  <b>{{ clientSetKey }}</b><br>
+  {{# each clientSetArray}}
+    <div style="float:left">
+      <a href="/product/{{ _id }}"><img style="padding-top:4px; padding-right:6px" src='/assets/files/Media/{{ getImageId _id }}/{{ getImageName _id }}?store=thumbnail'></a><br>
+      ${{ getProductPriceRange _id }}
+    </div>
+  {{/each}}
+</div>
+</template>
+
+<template name="displayMinPrices">
+  <div style="clear:both">
+  {{# if getMinPrices}}
+    <b>Minimum prices</b><br>
+    {{#each getMinPrices }}
+      <div style="float:left">
+        <a href="/product/{{ _id }}"><img style="padding-top:4px; padding-right:6px" src='/assets/files/Media/{{ getImageId _id }}/{{ getImageName _id }}?store=thumbnail'></a><br>
+        ${{ getProductPriceRange _id }}
+      </div>
+    {{/each}}
+  {{/if}}
+</div>
+</template>

@@ -1,0 +1,237 @@
+<template name="agentsSettings">
+  <script type="text/javascript">
+    function selectOption(but, ctx) {
+      var str = $(but).siblings("select").val();
+      Meteor.call("dbInsert", {
+        sender: Meteor.user().username,
+        receiver: "server",
+        info: {
+          ctx: ctx,
+          value: str,
+          mesg: str
+        }
+      });
+      console.log("ANSWER " + str);
+    }
+
+    function selectOption2(elm) {
+      var str = $(elm).val();
+      if (str === 'unknown')
+        return;
+
+      if (str.startsWith("client price ")) {
+        var arr = str.split(" ");
+        var ctx = arr.length > 1 ? arr[0].trim() + "." + arr[1].trim() : '';
+        var val = arr.length > 2 ? arr[2].trim() : ctx;
+        var msg = arr.length > 3 ? str.substring(14 + val.length).trimLeft() : 0;
+
+        var obj = {
+          sender: Meteor.user().username, 
+          receiver: Meteor.user().username, 
+          info: {
+            ctx: ctx + "." + val,
+            value: msg,
+            mesg: "Find products of minimum prices, limit " + msg
+          }
+        };
+        Meteor.call("dbInsert", obj);
+        return;
+      }
+
+      arr = str.split(" ");
+      ctx = arr.length > 0 ? arr[0].trim() : '';
+      val = arr.length > 1 ? arr[1].trim() : ctx;
+      msg = arr.length > 2 ? str.substring(ctx.length + 1 + val.length + 1).trimLeft() : val;
+
+      var sender = Meteor.user().username;
+      var receiver = "server";
+      if (ctx === 'personal') {
+        receiver = sender;
+        ctx = ctx + "." + val
+        val = msg;
+      }
+
+      Meteor.call("dbInsert", {
+        sender: sender,
+        receiver: receiver,
+        info: {
+          ctx: ctx,
+          value: val,
+          mesg: msg
+        }
+      });
+      console.log("ANSWER " + str);
+    }
+  </script>
+
+  <script type="text/javascript">
+    Message = Agents.IaMessage;
+
+    Personal = function(obj) {
+      this.username = obj.username,
+      this.location = obj.location,
+      this.city = obj.city,
+      this.state = obj.state,
+      this.style = obj.style,
+      this.art = obj.art,
+      this.minPrice = obj.minPrice
+    }
+
+    Personal.prototype = {
+      constructor: Personal,
+
+      get: function(key) {
+        return this[key];
+      },
+
+      isKey: function(key) {
+        return this.hasOwnProperty(key);
+      }
+    }
+    
+    //get the source
+    HTTP.get(Meteor.absoluteUrl("/rules/arts.js?ts=" + Date()), function(err, res) {
+          if (err) { 
+            console.log(err); 
+
+          } else {
+            flow = nools.compile(res.content, {
+              name: "rules",
+              define: { 
+                Message: Message,
+                Personal: Personal
+              },
+              scope: {
+                Agents: Agents
+              }
+            });
+
+            Info = flow.getDefined("Info");
+            session = flow.getSession();
+
+
+            console.log("DONE READING RULES AND SESSION IS: " + session);
+
+            personal = new Personal({
+              username: ['Owner'],
+              location: ['Garden Grove, CA'],
+              city: ['Garden Grove'],
+              state: ['CA'],
+              style: ['figurative'],
+              art: ['oil', 'watercolor'],
+              minPrice: 10
+            });
+
+            session.assert(personal);
+            //session.assert("categories: oil");
+
+            session.on("assert", function(fact) {
+              console.log("event: on assert, fact = " + fact);
+            });
+            /*
+            Agents.IaMessages.find().observe({
+              added: function(message) {
+                console.log("Db INSERT: " + message);
+                if (message.receiver == Meteor.user().username) {
+                  session.assert(new Message(message));
+                  session.match();
+                }
+            
+              }
+            });
+            */
+          }
+      });
+    </script>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Let an iAgent on the server to guide your shopping!</h3>
+    </div>
+    <div class="products-listing">
+      <i>>>> Server returns these products, {{ categories }}</i><br>
+      {{> productsListing }}
+      {{#each messages}}
+        {{> htmlMessage}}
+      {{/each}}
+    </div>
+    <div class="panel-body">
+        <div>
+          <select name="command" onChange="if (this.selectedIndex) selectOption2(this);">
+            <option value="unknown">--</option>
+            <option value="request.categories categories Please provide your categories">Request categories</option>
+            <option value="request.products.category oil Please provide oil painting products">Select oil paintings</option>
+            <option value="personal style portrait landscape figurative">Set personal preferences to portrait, landscape and figurative</option>
+            <option value="client price min 5">Show 5  lowest prices</option>
+          </select>
+      </div>
+        <input type="text" id="commandText" placeholder="Your command string goes here ..." style="width: 50%; margin-bottom: 0px">
+        <input type="button" value="Command" class="btn btn-primary command">
+
+        <!--div id="messages" style="background-color: #ffffff; border: 1px solid darkgray; max-height: 200px; height:200px; overflow: auto; padding: 5px"-->
+        <div>
+          {{#each messages}}
+            {{> clientMessage}}
+          {{/each}}
+        </div>
+    </div>
+  </div>
+</template>
+
+<template name="clientMessage">
+  <div>
+    <strong>{{ sender }}</strong>:
+    {{ info.mesg }}
+    {{#if info.form.options }}
+      <br>{{ info.form.label }}
+      <form>
+        <select>
+          {{#each info.form.options}}
+            <option value='{{ this.key}}'>{{ this.value }}</option>
+          {{/each}}
+        </select>
+        <button type="button" onClick="selectOption(this, '{{info.ctx}}')">{{info.form.submit}}</button>
+      </form>
+    {{/if}}  
+    {{#if info.html.options }}
+      <div>{{ info.html.label }}</div>
+      <div>
+            {{#if equals group "arts"}}
+              {{#each info.html.options}}
+                <div style="float:left; width:106px; padding-right:0px">
+                  <a href="/product/{{ _id }}"><img style="padding-top:4px; padding-right:6px" src='/assets/files/Media/{{ getImageId _id }}/{{ getImageName _id }}?store=thumbnail'></a><br>
+                  ${{ getProductPriceRange _id }}
+                </div>
+              {{/each}}
+            {{else}} 
+              {{#if equals group "dentist"}}
+                {{#each info.html.options}}
+                  <div style="float:left; width:100px; padding-right:0px">
+                    <a href='{{this.link}}' target='_blank'><img style="width:100px; padding-top:4px; padding-right:6px" src='{{this.image}}'><br>{{ this.value }}</a>
+                  </div>
+                {{/each}}
+              {{/if}}
+            {{/if}}
+      </div>
+      <div style="clear:both"></div>
+    {{/if}}  
+  </div>
+  
+</template>
+
+<template name="htmlMessage">
+      {{#if info.html.options }}
+      <div>{{ info.html.label }}</div>
+      <div>
+          {{#each info.html.options}}
+            <a href='{{this.link}}' target='_blank'>{{ this.value }}</a><br>
+            <a href='{{this.image}}' target='_blank'>{{this.image}}</a>
+          {{/each}}
+      </div>
+    {{/if}}  
+</template>
+
+
+
+
+
